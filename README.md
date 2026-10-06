@@ -30,7 +30,7 @@ The project therefore uses Tetris to validate the main engineering components re
 ## 🧠 System Pipeline
 
 <p align="center">
-  <img src="assets/images/tetris_pipeline.png" width="800">
+  <img src="assets/images/Overall%20technical%20roadmap.png" width="800">
 </p>
 
 <p align="center">
@@ -75,12 +75,12 @@ The perception pipeline includes:
 - screen capture
 - region-of-interest selection
 - image preprocessing
-- foreground extraction
+- color-space-based foreground extraction
 - board-state reconstruction
 - continuous state updates
 
 <p align="center">
-  <img src="assets/images/state_extraction.png" width="750">
+  <img src="assets/images/State%20extraction.png" width="750">
 </p>
 
 <p align="center">
@@ -188,7 +188,7 @@ A fully connected branch processes information describing the current falling pi
 The two representations are then fused before the network predicts the target action.
 
 <p align="center">
-  <img src="assets/images/neural_policy.png" width="800">
+  <img src="assets/images/Neural%20network%20policy%20structure.png" width="800">
 </p>
 
 <p align="center">
@@ -230,7 +230,7 @@ Additional execution logic is used to improve robustness during real-interface c
 - frame-based state updates
 
 <p align="center">
-  <img src="assets/images/closed_loop_control.png" width="750">
+  <img src="assets/images/Closed-loop%20control%20interface.png" width="750">
 </p>
 
 <p align="center">
@@ -336,10 +336,10 @@ tetris-closed-loop-control/
 │
 ├── assets/
 │   └── images/
-│       ├── tetris_pipeline.png
-│       ├── state_extraction.png
-│       ├── neural_policy.png
-│       └── closed_loop_control.png
+│       ├── Closed-loop control interface.png
+│       ├── Neural network policy structure.png
+│       ├── Overall technical roadmap.png
+│       └── State extraction.png
 │
 ├── README.md
 └── .gitignore
