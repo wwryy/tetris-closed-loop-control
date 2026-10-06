@@ -4,6 +4,8 @@ A vision-based closed-loop control platform for **state perception, simulation, 
 
 This project was developed as the foundational verification stage of a broader reinforcement-learning platform for robotic systems.
 
+> **Release status:** This repository currently presents the project methodology and selected results. Source code and implementation materials are not included in the present portfolio release.
+
 Rather than treating Tetris simply as a game implementation, the project uses it as a compact environment for validating the complete engineering loop:
 
 **Perception → State Representation → Decision → Action → Environment Feedback**
@@ -364,15 +366,15 @@ Beijing University of Technology
 
 ## 🔗 Related Projects
 
-### 🦾 Humanoid Motion Learning
+### [🦾 Humanoid Motion Learning](https://github.com/wwryy/humanoid-robot-learning)
 
 Video-driven human motion recovery, humanoid motion retargeting, Unitree G1 tracking-policy learning, cross-simulation validation, and real-robot deployment preparation.
 
-### 🤖 Task-Registered Robotic Welding Framework
+### [🤖 Task-Registered Robotic Welding Framework](https://github.com/wwryy/robotic-welding-platform)
 
 Sim-to-real visual perception, task-registered synthetic data, RGB-D geometry recovery, 3D weld-path generation, and downstream robot interfaces.
 
-Links will be added after the corresponding repository URLs are finalized.
+The original project materials and media remain all rights reserved unless otherwise noted.
 
 ---
 
