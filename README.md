@@ -12,7 +12,7 @@ Rather than treating Tetris simply as a game implementation, the project uses it
 
 ## 🔍 Overview
 
-Before developing reinforcement-learning systems for high-dimensional robotic tasks, it is useful to verify the fundamental interaction pipeline in a smaller and more controllable environment.
+Before developing learning-based control systems for high-dimensional robotic tasks, it is useful to verify the fundamental interaction pipeline in a smaller and more controllable environment.
 
 Tetris provides:
 
@@ -23,13 +23,21 @@ Tetris provides:
 - repeatable simulation
 - visual observations from a real interface
 
-The project therefore uses Tetris to validate the main components required for later robotic closed-loop control.
+The project therefore uses Tetris to validate the main engineering components required for later robotic closed-loop control.
 
 ---
 
 ## 🧠 System Pipeline
 
-The complete workflow is:
+<p align="center">
+  <img src="assets/images/tetris_pipeline.png" width="800">
+</p>
+
+<p align="center">
+  <i>Overall closed-loop verification pipeline from visual state extraction to neural-policy-based automatic control.</i>
+</p>
+
+The overall workflow is:
 
 ```text
 Real Tetris Interface
@@ -53,25 +61,33 @@ Automatic Control
 Updated Visual Observation
 ```
 
-This creates a complete perception–decision–execution–feedback loop.
+This creates a complete **perception–decision–execution–feedback** loop.
 
 ---
 
 ## 👁️ Visual State Extraction
 
-The first stage converts the real Tetris interface into a structured state representation that can be processed by control algorithms.
+The first stage converts the real Tetris interface into a structured state representation that can be processed by downstream control algorithms.
 
 The perception pipeline includes:
 
 - locating the game window
 - screen capture
-- manual region-of-interest selection
+- region-of-interest selection
 - image preprocessing
-- color-space-based foreground extraction
+- foreground extraction
 - board-state reconstruction
 - continuous state updates
 
-The extracted state provides a bridge between the visual game interface and downstream policy modules.
+<p align="center">
+  <img src="assets/images/state_extraction.png" width="750">
+</p>
+
+<p align="center">
+  <i>Visual state extraction from the real Tetris interface and conversion into a structured board representation.</i>
+</p>
+
+This stage establishes the bridge between a raw visual interface and a machine-readable environmental state.
 
 ---
 
@@ -91,7 +107,9 @@ The simulator implements the core game mechanics required for repeatable policy 
 - environment reset
 - board-state export
 
-Unlike the real interface, the simulator provides direct access to internal states, making it easier to test decision logic before transferring the controller back to the visual interface.
+Unlike the real game interface, the simulator provides direct access to internal environmental states.
+
+This makes it easier to test policy logic and controller behavior before transferring the decision system back to the visual interface.
 
 ---
 
@@ -105,20 +123,29 @@ The heuristic considers factors such as:
 
 - completed lines
 - holes
-- stack structure
-- surface variation
 - landing position
+- stack structure
+- row and column transitions
 - well structure
 
-The best candidate placement is selected as the reference action.
+A **Dellacherie-style evaluation function** is used to rank candidate placements and select a reference action.
 
-This heuristic is not intended to be the final controller. Its main role is to provide a stable baseline and generate reliable action references for later policy learning.
+The heuristic is not intended to be the final controller.
+
+Its main role is to provide:
+
+- a stable decision-making baseline
+- reference actions
+- structured training examples
+- a foundation for later learned-policy approximation
 
 ---
 
 ## 🗂 State–Action Data Generation
 
-During heuristic execution, the system records:
+During heuristic execution, the system records information describing both the current environmental state and the selected reference action.
+
+The recorded information includes:
 
 - current board state
 - current piece information
@@ -126,9 +153,9 @@ During heuristic execution, the system records:
 - selected target pose
 - selected target position
 
-These observations and actions form a state–action dataset.
+This produces a state–action dataset that can be used for neural policy learning.
 
-This stage verifies the same general idea required in later learning-based robotic systems:
+The process can be summarized as:
 
 ```text
 Environment State
@@ -140,31 +167,41 @@ Action Selection
 Training Sample
 ```
 
+This stage verifies the same general data-generation concept later required in learning-based robotic systems.
+
 ---
 
 ## 🧠 Neural Policy Learning
 
-A neural policy is trained to approximate the behavior of the heuristic controller.
+A neural policy is trained to approximate the decisions generated by the heuristic controller.
 
-The architecture combines two information sources:
+The architecture combines two information sources.
 
 ### Board-State Branch
 
-A convolutional network extracts spatial features from the reconstructed board state.
+A convolutional neural network extracts spatial features from the reconstructed board state.
 
 ### Piece-State Branch
 
 A fully connected branch processes information describing the current falling piece and its pose.
 
-The two representations are fused before the network predicts the target action.
+The two representations are then fused before the network predicts the target action.
 
-The resulting policy replaces explicit heuristic search during inference.
+<p align="center">
+  <img src="assets/images/neural_policy.png" width="800">
+</p>
+
+<p align="center">
+  <i>Neural policy architecture combining board-state spatial features with falling-piece state information.</i>
+</p>
+
+The trained network provides a learned approximation of the reference strategy and can replace explicit heuristic search during inference.
 
 ---
 
 ## 🔁 Closed-Loop Automatic Control
 
-The trained policy is integrated back into the real Tetris interface.
+The trained neural policy is reintegrated into the real Tetris interface.
 
 The controller continuously performs:
 
@@ -192,7 +229,15 @@ Additional execution logic is used to improve robustness during real-interface c
 - action correction
 - frame-based state updates
 
-This produces a complete closed-loop control system operating directly through visual observations.
+<p align="center">
+  <img src="assets/images/closed_loop_control.png" width="750">
+</p>
+
+<p align="center">
+  <i>Closed-loop automatic control interface after integrating the learned policy with the real game environment.</i>
+</p>
+
+This completes the full loop from visual perception to automatic execution and back to updated visual feedback.
 
 ---
 
@@ -200,7 +245,7 @@ This produces a complete closed-loop control system operating directly through v
 
 The purpose of this project is not simply to develop a Tetris-playing program.
 
-Instead, Tetris serves as a small-scale verification environment for engineering concepts that later appear in robotics:
+Instead, Tetris serves as a compact verification environment for engineering concepts that later appear in robotics.
 
 | Tetris System | Robotics Analogy |
 |---|---|
@@ -235,17 +280,17 @@ This staged approach makes it possible to debug the perception–decision–exec
 
 ### Policy & Learning
 
-- heuristic search
-- Dellacherie-style evaluation
+- Dellacherie-style heuristic search
+- state–action data generation
 - PyTorch
 - convolutional neural networks
 - supervised policy approximation
 
 ### Control
 
-- real-time state updates
+- real-time visual state updates
 - keyboard-based automatic execution
-- closed-loop visual feedback
+- closed-loop feedback
 
 ### Programming
 
@@ -259,7 +304,7 @@ This project was completed as part of a team Keystone project on reinforcement-l
 
 I served as the **group leader** and participated in the development, integration, testing, and organization of the staged verification platform.
 
-The work formed the foundational algorithmic stage before the project progressed to humanoid motion learning and robotic welding simulation.
+The Tetris system formed the foundational algorithmic stage before the broader project progressed to humanoid motion learning and robotic welding simulation.
 
 ---
 
@@ -270,12 +315,17 @@ The Tetris platform verifies several capabilities later reused conceptually in r
 - perception-to-state conversion
 - repeatable simulation
 - baseline policy construction
-- training-data generation
+- state–action data generation
 - neural policy representation
 - automatic action execution
 - closed-loop feedback
 
-The broader project subsequently extends these ideas to humanoid motion tracking and confined-space robotic welding.
+The broader project subsequently extends these concepts to:
+
+- humanoid motion recovery and retargeting
+- whole-body tracking-policy training
+- cross-simulation humanoid validation
+- robotic welding perception and simulation
 
 ---
 
@@ -286,18 +336,18 @@ tetris-closed-loop-control/
 │
 ├── assets/
 │   └── images/
-│
-├── src/
-│   ├── perception/
-│   ├── simulator/
-│   ├── policy/
-│   └── control/
+│       ├── tetris_pipeline.png
+│       ├── state_extraction.png
+│       ├── neural_policy.png
+│       └── closed_loop_control.png
 │
 ├── README.md
 └── .gitignore
 ```
 
-Selected project materials and demonstrations will be added progressively.
+This repository currently serves primarily as a **project portfolio and technical overview**.
+
+Selected source code and implementation materials may be added progressively.
 
 ---
 
@@ -314,8 +364,15 @@ Beijing University of Technology
 
 ## 🔗 Related Projects
 
-- 🦾 **Humanoid Motion Learning** — video-driven motion recovery, retargeting, tracking-policy learning, and cross-simulation validation
-- 🤖 **Task-Registered Robotic Welding Framework** — sim-to-real perception, RGB-D geometry recovery, weld-path generation, and robot interfaces
+### 🦾 Humanoid Motion Learning
+
+Video-driven human motion recovery, humanoid motion retargeting, Unitree G1 tracking-policy learning, cross-simulation validation, and real-robot deployment preparation.
+
+### 🤖 Task-Registered Robotic Welding Framework
+
+Sim-to-real visual perception, task-registered synthetic data, RGB-D geometry recovery, 3D weld-path generation, and downstream robot interfaces.
+
+Links will be added after the corresponding repository URLs are finalized.
 
 ---
 
